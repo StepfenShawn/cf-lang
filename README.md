@@ -13,12 +13,12 @@ ENEMY DOWN!
 `ENEMY DOWN!`:  MAIN END  
 `REPORTING IN`: PRINT FUNCTION  
 `FIRE IN THE HOLE`: EXIT FUNCTION  
-`Keep your fire`: WHILE  
-`Hold your fire`: END WHILE  
-`wait for my go`: IF  
-`Go! Go! Go!`: ENDIF  
-`get in position [varname]:[value]`: ASSIGN  
-`Follow me`: END ASSIGN  
+`KEEP YOUR FIRE`: WHILE  
+`HOLD YOUR FIRE`: END WHILE  
+`WAIT FOR MY GO`: IF  
+`GO! GO! GO!`: ENDIF  
+`GET IN POSITION [varname]:[value]`: ASSIGN  
+`FOLLOW ME`: END ASSIGN  
 
 ## Note: Cf-lang is under developing. Loop and If can not work yet. Sorry about it.
 

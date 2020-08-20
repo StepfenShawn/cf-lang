@@ -18,18 +18,20 @@
 
 # /* A +oo Loop! */
 # ENEMY SPOTTED!
-#   GET IN POSITION [A]:1!
+#   GET IN POSITION [A : 1]!
 #   FOLLOW ME!
 #   REPORTING IN [A]!
 #   KEEP YOUR FIRE [A]!
-#       REPORTING IN "Go to hell!"!
+#       REPORTING IN ["Go to hell!"]!
 #   HOLD YOUR FIRE!
 #   FIRE IN THE HOLE!
 # ENEMY DOWN!
 
 keyword = {
-    "PRINT" : "REPORTINGIN",      # REPORTING IN
-    "EXIT"  : "FIREINTHEHOLE"     # FIRE YOU GO HOLE
+    "PRINT"     : "REPORTINGIN",      # REPORTING IN
+    "EXIT"      : "FIREINTHEHOLE",    # FIRE YOU GO HOLE
+    "ASSIGN"    : "GETINPOSITION",    # GET IN POSITION
+    "ENDASSIGN" : "FOLLOWME"          # FOLLOW ME
 }
 
 def cf_run(code):
@@ -52,11 +54,33 @@ def cf_run(code):
         code = code.replace(keyword["PRINT"] , "print")
     if keyword["EXIT"] in code:
         code = code.replace(keyword["EXIT"], "exit()")
+    if keyword["ASSIGN"] in code:
+        code = code.replace(keyword["ASSIGN"], "assign")
+    if keyword["ENDASSIGN"] in code:
+        code = code.replace(keyword["ENDASSIGN"], "endassign")
     cf_eval(code)
 
+key = []
+value = []
+
 def cf_eval(code):
+    global endassign
+    if 'assign' in code:
+        key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
+        value.append(code[code.index(':') + 1 : code.index(')')])
+        code = code[code.index(')') + 1:]
+        endassign = True
+    
+    if not endassign and 'endassign' not in code:
+        print("You need soldiers to follow you when you're in position");
+        
     if 'print' in code:
-        eval(code[code.index('print') : code.index(')') + 1])
+        # identifier
+        if code[code.index('(') + 1 : code.index(')')].isalpha():
+            print(value[key.index(code[code.index('(') + 1 : code.index(')')])])
+        # String Or Number
+        else:
+            eval(code[code.index('print') : code.index(')') + 1])
     if 'exit()' in code:
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
 
