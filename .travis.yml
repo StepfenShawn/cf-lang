@@ -3,5 +3,4 @@ python:
   - "3.7"
 # command to run tests
 script:
-  - cd src/
-  - python main.py ../examples/helloworld.cf
+  - python3 src/main.py examples/helloworld.cf
