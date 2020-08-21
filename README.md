@@ -2,6 +2,7 @@
 CF-lang is an America special forces's programming language, Let's kill all the enemy!  
 ![image](img/special-forces.jpg)
 # Examples
+HelloWorld:
 ```
 ENEMY SPOTTED!
    REPORTING IN ["Hello World"]!
@@ -12,11 +13,11 @@ ENEMY DOWN!
 endless loop:
 ```
 ENEMY SPOTTED!
-   GET IN POSITION [A : 1]!
+   I AM IN POSITION [A : 1]!
    FOLLOW ME!
    REPORTING IN [A]!
    KEEP YOUR FIRE [A]!
-       REPORTING IN ["Go to hell!"]!
+       REPORTING IN ["Go-to-hell!"]!
    HOLD YOUR FIRE!
    FIRE IN THE HOLE!
 ENEMY DOWN!
@@ -31,7 +32,7 @@ ENEMY DOWN!
 `HOLD YOUR FIRE`: END WHILE  
 `WAIT FOR MY GO`: IF  
 `GO! GO! GO!`: ENDIF  
-`GET IN POSITION [varname]:[value]`: ASSIGN  
+`I AM IN POSITION [varname]:[value]`: ASSIGN  
 `FOLLOW ME`: END ASSIGN  
 
 ## Note: If Stmt can not work yet. Sorry about it.

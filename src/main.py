@@ -11,7 +11,7 @@
 # HOLD YOUR FIRE                        :    end while
 # WAIT FOR MY GO                        :    IF
 # GO!GO!GO!                             :    ENDIF
-# GET IN POSITION [varname]:[value]     :    assign
+# I AM IN POSITION [varname]:[value]     :    assign
 # FOLLOW ME                             :    end assign
 
 # Examples:
@@ -24,7 +24,7 @@
 
 # /* A +oo Loop! */
 # ENEMY SPOTTED!
-#   GET IN POSITION [A : 1]!
+#   I AM IN POSITION [A : 1]!
 #   FOLLOW ME!
 #   REPORTING IN [A]!
 #   KEEP YOUR FIRE [A]!
@@ -36,7 +36,7 @@
 keyword = {
     "PRINT"     : "REPORTINGIN",      # REPORTING IN
     "EXIT"      : "FIREINTHEHOLE",    # FIRE YOU GO HOLE
-    "ASSIGN"    : "GETINPOSITION",    # GET IN POSITION
+    "ASSIGN"    : "IAMINPOSITION",    # I AM IN POSITION
     "ENDASSIGN" : "FOLLOWME",         # FOLLOW ME
     "WHILE"     : "KEEPYOURFIRE",     # KEEP YOUR FIRE
     "ENDWHILE"  : "HOLDYOURFIRE"      # HOLD YOUR FIRE
@@ -55,6 +55,7 @@ def cf_run(code):
     code = code[len('ENEMY SPOTTED!') : -len('ENEMY DOWN!')]
     # Remove the whitespace
     code = code.replace(" ", "")
+    code = code.replace("-", " ")
     code = code.replace("!", "")
     code = code.replace("[", "(")
     code = code.replace("]", ")")

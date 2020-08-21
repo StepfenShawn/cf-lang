@@ -1,0 +1,7 @@
+language: python
+python:
+  - "3.7"
+# command to run tests
+script:
+  - cd src/
+  - python main.py ../examples/helloworld.cf
