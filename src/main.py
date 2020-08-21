@@ -118,9 +118,12 @@ sys.path.insert(0, "../..")
 # If a filename has been specified, we try to run it.
 def main():
     if len(sys.argv) == 2:
-        with open(sys.argv[1]) as f:
-            code = f.read()
-        cf_run(code)
+        try:
+            with open(sys.argv[1]) as f:
+                code = f.read()
+            cf_run(code)
+        except FileNotFoundError:
+            print("File not found!")
 
 if __name__ == '__main__':
     main()
