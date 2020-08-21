@@ -1,12 +1,18 @@
-# Enemy spotted              :    START
-# Reporting in               :    PRINT
-# Enemy Down                 :    END
-# Fire in the hole           :    exit function
-# Keep your fire             :    while
-# Hold your fire             :    end while
-# wait for my go             :    IF
-# Follow me                   :    end assign
-# get in position [varname]:[value]   :    assign
+#===============================================
+# FILENAME: main.py
+# created at 2020/8/18 15:46:04
+#===============================================
+
+# ENEMY SPOTTES!                        :    START
+# REPORTING IN                          :    PRINT
+# ENEMY DOWN!                           :    END
+# FIRE IN THE HOLE                      :    exit function
+# KEEP YOUR WHILE                       :    while
+# HOLD YOUR FIRE                        :    end while
+# WAIT FOR MY GO                        :    IF
+# GO!GO!GO!                             :    ENDIF
+# GET IN POSITION [varname]:[value]     :    assign
+# FOLLOW ME                             :    end assign
 
 # Examples:
 
@@ -64,14 +70,14 @@ key = []
 value = []
 
 def cf_eval(code):
-    global endassign
+    endassign = False
     if 'assign' in code:
         key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
         value.append(code[code.index(':') + 1 : code.index(')')])
         code = code[code.index(')') + 1:]
         endassign = True
     
-    if not endassign and 'endassign' not in code:
+    if endassign and 'endassign' not in code:
         print("You need soldiers to follow you when you're in position");
         
     if 'print' in code:
