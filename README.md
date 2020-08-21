@@ -8,6 +8,20 @@ ENEMY SPOTTED!
    FIRE IN THE HOLE!
 ENEMY DOWN!
 ```
+  
+endless loop:
+```
+ENEMY SPOTTED!
+   GET IN POSITION [A : 1]!
+   FOLLOW ME!
+   REPORTING IN [A]!
+   KEEP YOUR FIRE [A]!
+       REPORTING IN ["Go to hell!"]!
+   HOLD YOUR FIRE!
+   FIRE IN THE HOLE!
+ENEMY DOWN!
+```
+  
 
 `ENEMY SPOTTED!`: MAIN BEGIN  
 `ENEMY DOWN!`:  MAIN END  
@@ -20,7 +34,7 @@ ENEMY DOWN!
 `GET IN POSITION [varname]:[value]`: ASSIGN  
 `FOLLOW ME`: END ASSIGN  
 
-## Note: Cf-lang is under developing. Loop and If can not work yet. Sorry about it.
+## Note: If Stmt can not work yet. Sorry about it.
 
 # How to run?
 ```

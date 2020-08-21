@@ -37,7 +37,9 @@ keyword = {
     "PRINT"     : "REPORTINGIN",      # REPORTING IN
     "EXIT"      : "FIREINTHEHOLE",    # FIRE YOU GO HOLE
     "ASSIGN"    : "GETINPOSITION",    # GET IN POSITION
-    "ENDASSIGN" : "FOLLOWME"          # FOLLOW ME
+    "ENDASSIGN" : "FOLLOWME",         # FOLLOW ME
+    "WHILE"     : "KEEPYOURFIRE",     # KEEP YOUR FIRE
+    "ENDWHILE"  : "HOLDYOURFIRE"      # HOLD YOUR FIRE
 }
 
 def cf_run(code):
@@ -64,6 +66,10 @@ def cf_run(code):
         code = code.replace(keyword["ASSIGN"], "assign")
     if keyword["ENDASSIGN"] in code:
         code = code.replace(keyword["ENDASSIGN"], "endassign")
+    if keyword["WHILE"] in code:
+        code = code.replace(keyword["WHILE"], "while")
+    if keyword["ENDWHILE"] in code:
+        code = code.replace(keyword["ENDWHILE"], "endwhile")
     cf_eval(code)
 
 key = []
@@ -71,15 +77,30 @@ value = []
 
 def cf_eval(code):
     endassign = False
+    endwhile = False
     if 'assign' in code:
         key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
         value.append(code[code.index(':') + 1 : code.index(')')])
-        code = code[code.index(')') + 1:]
+        if not endwhile:
+            code = code[code.index(')') + 1 : ]
         endassign = True
     
     if endassign and 'endassign' not in code:
-        print("You need soldiers to follow you when you're in position");
-        
+        print("You need soldiers to follow you when you're in position")
+    
+    if 'while' in code:
+        endwhile = True
+        cond = code[code.index('(') + 1 : code.index(')')]
+        code = code[code.index(')') + 1 : ]
+        block = code[code.index(')') + 1 : code.index('endwhile')]
+        print(block)
+        if code[code.index('(') + 1: code.index(')')].isalpha():
+            while int(value[key.index(cond)]):
+                cf_eval(block)
+
+    if endwhile and 'endwhile' not in code:
+        print("You've run out of bullets. Mission failed")
+    
     if 'print' in code:
         # identifier
         if code[code.index('(') + 1 : code.index(')')].isalpha():
@@ -89,7 +110,7 @@ def cf_eval(code):
             eval(code[code.index('print') : code.index(')') + 1])
     if 'exit()' in code:
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
-
+    
 import sys
 sys.path.insert(0, "../..")
 
