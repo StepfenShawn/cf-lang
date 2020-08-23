@@ -13,6 +13,8 @@
 # GO!GO!GO!                             :    ENDIF
 # I AM IN POSITION [varname]:[value]    :    assign
 # FOLLOW ME                             :    end assign
+# MOVE ON                               :    ++
+# MOVE BACK                             :    --
 
 # Examples:
 
@@ -41,7 +43,9 @@ keyword = {
     "WHILE"     : "KEEPYOURFIRE",     # KEEP YOUR FIRE
     "ENDWHILE"  : "HOLDYOURFIRE",     # HOLD YOUR FIRE
     "IF"        : "WAITFORMYGO",      # WAIT FOR MY GO
-    "ENDIF"     : "GOGOGO"            # GO!GO!GO!
+    "ENDIF"     : "GOGOGO",           # GO! GO! GO!
+    "ADD"       : "MOVEON",           # MOVE ON
+    "SUB"       : "MOVEBACK"          # MOVE BACK
 }
 
 def cf_run(code):
@@ -55,12 +59,14 @@ def cf_run(code):
         exit()
     # Remove the "ENEMY SPOTTED!" and "ENEMY DOWN!"
     code = code[len('ENEMY SPOTTED!') : -len('ENEMY DOWN!')]
+
     # Remove the whitespace
     code = code.replace(" ", "")
     code = code.replace("-", " ")
     code = code.replace("!", "")
     code = code.replace("[", "(")
     code = code.replace("]", ")")
+
     if keyword["PRINT"] in code:
         code = code.replace(keyword["PRINT"] , "print")
     if keyword["EXIT"] in code:
@@ -77,6 +83,10 @@ def cf_run(code):
         code = code.replace(keyword["IF"], "if")
     if keyword["ENDIF"] in code:
         code = code.replace(keyword["ENDIF"], "endif")
+    if keyword["ADD"] in code:
+        code = code.replace(keyword["ADD"], "add")
+    if keyword["SUB"] in code:
+        code = code.replace(keyword["SUB"], "sub")
     cf_eval(code)
 
 key = []
@@ -89,10 +99,19 @@ def cf_eval(code):
     if 'assign' in code:
         key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
         value.append(code[code.index(':') + 1 : code.index(')')])
-        if not endwhile:
-            code = code[code.index(')') + 1 : ]
+        code = code[code.index(')') + 1 : ]
         endassign = True
+    """
+    if 'add' in code:
+        if code[code.index('(') + 1 : code.index(')')].isalpha:
+            value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) + 1
+        code = code[code.index(')') + 1 : ]
     
+    if 'sub' in code:
+         if code[code.index('(') + 1 : code.index(')')].isalpha:
+            value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) - 1
+        code = code[code.index(')') + 1 : ]
+    """
     if endassign and 'endassign' not in code:
         print("You need soldiers to follow you when you're in position")
     
@@ -138,6 +157,10 @@ def main():
         try:
             with open(sys.argv[1]) as f:
                 code = f.read()
+            # Skip the comment
+            import re
+            m = re.compile(r'#.*?\n', re.S)
+            code = re.sub(m, "", code)
             cf_run(code)
         except FileNotFoundError:
             print("File not found!")

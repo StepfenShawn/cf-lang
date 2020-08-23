@@ -1,8 +1,9 @@
+// NOTE: CAN NOT WORK YET
 ENEMY SPOTTED!
     I AM IN POSITION [A : 0]!
     FOLLOW ME!
-    KEEP YOUR FIRE [A == 5]!
+    KEEP YOUR FIRE [A]!
         MOVE ON! [A]!
-        REPORTING IN "*****"!
+        REPORTING IN ["*****"]!
     HOLD YOUR FIRE!
 ENEMY DOWN!

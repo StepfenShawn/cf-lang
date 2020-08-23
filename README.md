@@ -46,7 +46,6 @@ python main.py [-filepath]
 ## TODO
 * Support function define
 * Add ElseIf stmt
-* Support Comment
 * Support For Loop
 
 ## Contributing
