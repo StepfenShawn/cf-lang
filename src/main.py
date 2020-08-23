@@ -11,7 +11,7 @@
 # HOLD YOUR FIRE                        :    end while
 # WAIT FOR MY GO                        :    IF
 # GO!GO!GO!                             :    ENDIF
-# I AM IN POSITION [varname]:[value]     :    assign
+# I AM IN POSITION [varname]:[value]    :    assign
 # FOLLOW ME                             :    end assign
 
 # Examples:
@@ -39,7 +39,9 @@ keyword = {
     "ASSIGN"    : "IAMINPOSITION",    # I AM IN POSITION
     "ENDASSIGN" : "FOLLOWME",         # FOLLOW ME
     "WHILE"     : "KEEPYOURFIRE",     # KEEP YOUR FIRE
-    "ENDWHILE"  : "HOLDYOURFIRE"      # HOLD YOUR FIRE
+    "ENDWHILE"  : "HOLDYOURFIRE",     # HOLD YOUR FIRE
+    "IF"        : "WAITFORMYGO",      # WAIT FOR MY GO
+    "ENDIF"     : "GOGOGO"            # GO!GO!GO!
 }
 
 def cf_run(code):
@@ -71,6 +73,10 @@ def cf_run(code):
         code = code.replace(keyword["WHILE"], "while")
     if keyword["ENDWHILE"] in code:
         code = code.replace(keyword["ENDWHILE"], "endwhile")
+    if keyword["IF"] in code:
+        code = code.replace(keyword["IF"], "if")
+    if keyword["ENDIF"] in code:
+        code = code.replace(keyword["ENDIF"], "endif")
     cf_eval(code)
 
 key = []
@@ -79,6 +85,7 @@ value = []
 def cf_eval(code):
     endassign = False
     endwhile = False
+    endif = False
     if 'assign' in code:
         key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
         value.append(code[code.index(':') + 1 : code.index(')')])
@@ -93,11 +100,22 @@ def cf_eval(code):
         endwhile = True
         cond = code[code.index('(') + 1 : code.index(')')]
         code = code[code.index(')') + 1 : ]
-        block = code[code.index(')') + 1 : code.index('endwhile')]
-        print(block)
+        while_block = code[code.index(')') + 1 : code.index('endwhile')]
+        print(while_block)
         if code[code.index('(') + 1: code.index(')')].isalpha():
-            while int(value[key.index(cond)]):
-                cf_eval(block)
+            while bool(value[key.index(cond)]):
+                cf_eval(while_block)
+
+    if 'if' in code:
+        endif = True
+        cond = code[code.index('(') + 1 : code.index(')')]
+        code = code[code.index(')') + 1 : ]
+        if_block = code[code.index(')') + 1 : code.index('endif')]
+        if bool(if_block):
+            cf_eval(if_block)
+    
+    if endif and 'endif' not in code:
+        print("Error: Please Go!(No endif foound)")
 
     if endwhile and 'endwhile' not in code:
         print("You've run out of bullets. Mission failed")
@@ -113,7 +131,6 @@ def cf_eval(code):
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
     
 import sys
-sys.path.insert(0, "../..")
 
 # If a filename has been specified, we try to run it.
 def main():

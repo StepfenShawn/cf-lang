@@ -1,6 +1,6 @@
 # What is CF-lang
-CF-lang is an America special forces's programming language, Let's kill all the enemy!  
-![image](img/special-forces.jpg)
+CF-lang is an America special forces's programming language, Let's kill all the enemy!    
+![image](img/special-forces.jpg)  
 # Examples
 HelloWorld:
 ```
@@ -34,14 +34,20 @@ ENEMY DOWN!
 `GO! GO! GO!`: ENDIF  
 `I AM IN POSITION [varname]:[value]`: ASSIGN  
 `FOLLOW ME`: END ASSIGN  
-
-## Note: If Stmt can not work yet. Sorry about it.
+`MOVE ON` : ++
+`MOVE BACK`: --
 
 # How to run?
 ```
 cd src/
 python main.py [-filepath]
 ```
+
+## TODO
+* Support function define
+* Add ElseIf stmt
+* Support Comment
+* Support For Loop
 
 ## Contributing
 Welcome to pull a request or open a issue!
