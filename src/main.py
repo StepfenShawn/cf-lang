@@ -101,19 +101,17 @@ def cf_eval(code):
         value.append(code[code.index(':') + 1 : code.index(')')])
         code = code[code.index(')') + 1 : ]
         endassign = True
-    """
+    
     if 'add' in code:
         if code[code.index('(') + 1 : code.index(')')].isalpha:
             value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) + 1
-        code = code[code.index(')') + 1 : ]
     
     if 'sub' in code:
-         if code[code.index('(') + 1 : code.index(')')].isalpha:
+        if code[code.index('(') + 1 : code.index(')')].isalpha:
             value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) - 1
-        code = code[code.index(')') + 1 : ]
-    """
+    
     if endassign and 'endassign' not in code:
-        print("You need soldiers to follow you when you're in position")
+        print("You need soldiers to follow you when you're in position(No endassign found)")
     
     if 'while' in code:
         endwhile = True
@@ -148,7 +146,9 @@ def cf_eval(code):
             eval(code[code.index('print') : code.index(')') + 1])
     if 'exit()' in code:
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
-    
+    if code == None:
+        exit()
+
 import sys
 
 # If a filename has been specified, we try to run it.

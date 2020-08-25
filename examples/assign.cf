@@ -1,6 +1,9 @@
-ENEMY SPOTTED!
-    I AM IN POSITION [A:100]!
-    FOLLOW ME!
-    REPORTING IN [A]!
-    FIRE IN THE HOLE!
+ENEMY SPOTTED!                      # Main begin
+    FIRE!                           # nop
+    I AM IN POSITION [A:100]!       # A = 100
+    FOLLOW ME!                      # endassign
+    REPORTING IN [A]!               # print the var "A"
+    MOVE ON [A]!                    # A++
+    REPORTING IN [A]!               # print the var "A"
+    FIRE IN THE HOLE!               # exit
 ENEMY DOWN!

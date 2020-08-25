@@ -13,6 +13,7 @@ ENEMY DOWN!
 endless loop:
 ```
 ENEMY SPOTTED!
+   FIRE!
    I AM IN POSITION [A : 1]!
    FOLLOW ME!
    REPORTING IN [A]!
@@ -34,8 +35,9 @@ ENEMY DOWN!
 `GO! GO! GO!`: ENDIF  
 `I AM IN POSITION [varname]:[value]`: ASSIGN  
 `FOLLOW ME`: END ASSIGN  
-`MOVE ON` : ++
-`MOVE BACK`: --
+`MOVE ON` : ++  
+`MOVE BACK`: --  
+`FIRE`: NOP
 
 # How to run?
 ```
