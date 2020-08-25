@@ -1,5 +1,6 @@
-ENEMY SPOTTED!                      # Main begin
-   FIRE!                            # nop
-   REPORTING IN ["Hello-World"]!    # print "Hello World"
-   FIRE IN THE HOLE!                # exit
+ENEMY SPOTTED!                      /* Main begin */
+   FIRE!                            /* nop */
+   REPORTING IN ["Hello-World"]!    /* print "Hello World" */
+   REPORTING IN ["Hello-World"]!    /* print "Hello World" */
+   FIRE IN THE HOLE!                /* exit */
 ENEMY DOWN!

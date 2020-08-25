@@ -78,7 +78,7 @@ def cf_run(code):
     if keyword["WHILE"] in code:
         code = code.replace(keyword["WHILE"], "while")
     if keyword["ENDWHILE"] in code:
-        code = code.replace(keyword["ENDWHILE"], "endwhile")
+        code = code.replace(keyword["ENDWHILE"], "endwhi")
     if keyword["IF"] in code:
         code = code.replace(keyword["IF"], "if")
     if keyword["ENDIF"] in code:
@@ -87,56 +87,55 @@ def cf_run(code):
         code = code.replace(keyword["ADD"], "add")
     if keyword["SUB"] in code:
         code = code.replace(keyword["SUB"], "sub")
-    cf_eval(code)
+    cf_parse(code)
 
 key = []
 value = []
 
-def cf_eval(code):
-    endassign = False
-    endwhile = False
-    endif = False
+def cf_parse(code):
+    # nop
+    if 'FIRE' in code:
+        code = code.replace("FIRE", "")
+    code = code.split("\n")
+    for i in range(len(code)):
+        cf_eval(code[i], i)
+
+key = []
+value = []
+
+def cf_let(var_name, val):
+    key.append(var_name)
+    value.append(val)
+
+def cf_eval(code, line):
+    # Init some var
+    while_cond = True
+    while_stmt = ""
+    end_while = False
+    while_start = 0
+
+    end_assign = False
+    assign_start = 0
+
     if 'assign' in code:
-        key.append(code[code.index(code[code.index('(') + 1 : code.index(')')]) : code.index(':')])
-        value.append(code[code.index(':') + 1 : code.index(')')])
-        code = code[code.index(')') + 1 : ]
-        endassign = True
-    
-    if 'add' in code:
-        if code[code.index('(') + 1 : code.index(')')].isalpha:
-            value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) + 1
-    
-    if 'sub' in code:
-        if code[code.index('(') + 1 : code.index(')')].isalpha:
-            value[key.index(code[code.index('(') + 1 : code.index(')')])] = int(value[key.index(code[code.index('(') + 1 : code.index(')')])]) - 1
-    
-    if endassign and 'endassign' not in code:
-        print("You need soldiers to follow you when you're in position(No endassign found)")
-    
+        end_assign = True
+        assign_start = line
+        try:
+            cf_let(code[code.index('(') + 1 : code.index(':')], code[code.index(':') + 1 : code.index(')')])
+        except Exception:
+            pass
+
+    if end_assign and line == assign_start + 1:
+        print("Line " + str(line) + ": You need soldiers to follow you when you're in position(No endassign found)")
+
     if 'while' in code:
-        endwhile = True
-        cond = code[code.index('(') + 1 : code.index(')')]
-        code = code[code.index(')') + 1 : ]
-        while_block = code[code.index(')') + 1 : code.index('endwhile')]
-        print(while_block)
-        if code[code.index('(') + 1: code.index(')')].isalpha():
-            while bool(value[key.index(cond)]):
-                cf_eval(while_block)
+        end_while = True
+        while_start = line
+        try:
+            while_cond = bool(int(code[code.index('(') + 1 : code.index(')')]))
+        except Exception:
+            pass
 
-    if 'if' in code:
-        endif = True
-        cond = code[code.index('(') + 1 : code.index(')')]
-        code = code[code.index(')') + 1 : ]
-        if_block = code[code.index(')') + 1 : code.index('endif')]
-        if bool(if_block):
-            cf_eval(if_block)
-    
-    if endif and 'endif' not in code:
-        print("Error: Please Go!(No endif foound)")
-
-    if endwhile and 'endwhile' not in code:
-        print("You've run out of bullets. Mission failed")
-    
     if 'print' in code:
         # identifier
         if code[code.index('(') + 1 : code.index(')')].isalpha():
@@ -146,8 +145,6 @@ def cf_eval(code):
             eval(code[code.index('print') : code.index(')') + 1])
     if 'exit()' in code:
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
-    if code == None:
-        exit()
 
 import sys
 
@@ -159,8 +156,8 @@ def main():
                 code = f.read()
             # Skip the comment
             import re
-            m = re.compile(r'#.*?\n', re.S)
-            code = re.sub(m, "", code)
+            m = re.compile(r'/\*.*?\*/', re.S)
+            code = re.sub(m, ' ', code)
             cf_run(code)
         except FileNotFoundError:
             print("File not found!")
