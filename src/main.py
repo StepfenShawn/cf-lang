@@ -74,7 +74,7 @@ def cf_run(code):
     if keyword["ASSIGN"] in code:
         code = code.replace(keyword["ASSIGN"], "assign")
     if keyword["ENDASSIGN"] in code:
-        code = code.replace(keyword["ENDASSIGN"], "endassign")
+        code = code.replace(keyword["ENDASSIGN"], "endass")
     if keyword["WHILE"] in code:
         code = code.replace(keyword["WHILE"], "while")
     if keyword["ENDWHILE"] in code:
@@ -97,25 +97,41 @@ def cf_parse(code):
     if 'FIRE' in code:
         code = code.replace("FIRE", "")
     code = code.split("\n")
+    codeobj = dict()
     for i in range(len(code)):
-        cf_eval(code[i], i)
+        codeobj[str(i)] = code[i]
+        cf_eval(codeobj[str(i)], i)
 
 key = []
 value = []
 
 def cf_let(var_name, val):
-    key.append(var_name)
-    value.append(val)
+    if var_name not in key:
+        key.append(var_name)
+        value.append(val)
+    if var_name in key:
+        value[key.index(var_name)] = val
+
+def cf_var_get(var_name):
+    return value[key.index(var_name)]
+
+while_cond = True
+while_stmt = []
+end_while = False
+while_start = 0
+end_assign = False
+assign_start = 0
 
 def cf_eval(code, line):
+    """
     # Init some var
-    while_cond = True
-    while_stmt = ""
-    end_while = False
-    while_start = 0
-
-    end_assign = False
-    assign_start = 0
+    """
+    global while_cond
+    global while_stmt
+    global end_while
+    global while_start
+    global end_assign
+    global assign_start
 
     if 'assign' in code:
         end_assign = True
@@ -124,17 +140,36 @@ def cf_eval(code, line):
             cf_let(code[code.index('(') + 1 : code.index(':')], code[code.index(':') + 1 : code.index(')')])
         except Exception:
             pass
-
-    if end_assign and line == assign_start + 1:
-        print("Line " + str(line) + ": You need soldiers to follow you when you're in position(No endassign found)")
-
+    """
+    if end_assign and line == assign_start + 1 and "endass" not in code:
+        print("Line " + str(line + 1) + ": You need soldiers to follow you when you're in position(No endassign found)")
+        exit()
+    """
     if 'while' in code:
-        end_while = True
         while_start = line
-        try:
+        if code[code.index('(') + 1 : code.index(')')].isalpha():
+            while_cond = bool(int(cf_var_get(code[code.index('(') + 1 : code.index(')')])))
+        else:
             while_cond = bool(int(code[code.index('(') + 1 : code.index(')')]))
-        except Exception:
-            pass
+        end_while = True
+    
+    if end_while and line != 0 and "endwhi" not in code:
+        while_stmt.append(code)
+
+    if "endwhi" in code:
+        while while_cond != False:
+            if while_stmt == []:
+                break
+            else:
+                for i in range(len(while_stmt)):
+                    cf_eval(while_stmt[i], i)                
+        
+    if 'add' in code:
+        val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
+        cf_let(code[code.index('(') + 1 : code.index(')')], int(val) + 1)
+    if 'sub' in code:
+        val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
+        cf_let(code[code.index('(') + 1 : code.index(')')], int(val) - 1)
 
     if 'print' in code:
         # identifier
@@ -147,6 +182,7 @@ def cf_eval(code, line):
         eval(code[code.index('exit') : code.index('exit') + len('exit()')])
 
 import sys
+sys.setrecursionlimit(10000)
 
 # If a filename has been specified, we try to run it.
 def main():

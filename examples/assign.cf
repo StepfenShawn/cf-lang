@@ -2,6 +2,7 @@ ENEMY SPOTTED!                      /* Main begin */
     FIRE!                           /* nop */
     I AM IN POSITION [A : 100]!     /* A = 100 */
     FOLLOW ME!                      /* endassign */
+    MOVE BACK [A]!                  /* A-- */
     I AM IN POSITION [B : 10]!      /* A = 100 */
     FOLLOW ME!                      /* endassign */
     REPORTING IN [A]!               /* print the var "A" */
