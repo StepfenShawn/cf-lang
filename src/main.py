@@ -102,30 +102,28 @@ def cf_parse(code):
         codeobj[str(i)] = code[i]
         cf_eval(codeobj[str(i)], i)
 
-key = []
-value = []
+khash = dict()
 
 def cf_let(var_name, val):
-    if var_name not in key:
-        key.append(var_name)
-        value.append(val)
-    if var_name in key:
-        value[key.index(var_name)] = val
+    khash[var_name] = val
 
-def cf_var_get(var_name):
-    return value[key.index(var_name)]
+def cf_var_get(var_name) -> str:
+    return khash[var_name]
 
+while_run = False
+while_start = 0
+end_while = False
 while_cond = True
 while_stmt = []
-end_while = False
-while_start = 0
-end_assign = False
 assign_start = 0
+end_assign = False
+if_start = 0
+end_if = False
+if_cond = True
+if_stmt = []
 
 def cf_eval(code, line):
-    """
-    # Init some var
-    """
+    global while_run
     global while_cond
     global while_stmt
     global end_while
@@ -153,28 +151,29 @@ def cf_eval(code, line):
             while_cond = bool(int(code[code.index('(') + 1 : code.index(')')]))
         end_while = True
     
-    if end_while and line != 0 and "endwhi" not in code:
+    if end_while and line != 0 and not while_run and "endwhi" not in code:
         while_stmt.append(code)
 
     if "endwhi" in code:
-        while while_cond != False:
-            if while_stmt == []:
-                break
-            else:
+        end_while = False
+        if while_stmt == []:
+            pass
+        else:
+            while_run = True
+            while while_cond:
                 for i in range(len(while_stmt)):
-                    cf_eval(while_stmt[i], i)                
-        
+                    cf_eval(while_stmt[i], i)
+
     if 'add' in code:
         val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
         cf_let(code[code.index('(') + 1 : code.index(')')], int(val) + 1)
     if 'sub' in code:
         val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
         cf_let(code[code.index('(') + 1 : code.index(')')], int(val) - 1)
-
     if 'print' in code:
         # identifier
         if code[code.index('(') + 1 : code.index(')')].isalpha():
-            print(value[key.index(code[code.index('(') + 1 : code.index(')')])])
+            print(cf_var_get(code[code.index('(') + 1 : code.index(')')]))
         # String Or Number
         else:
             eval(code[code.index('print') : code.index(')') + 1])

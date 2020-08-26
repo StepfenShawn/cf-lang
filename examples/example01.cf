@@ -1,10 +1,25 @@
-ENEMY SPOTTED!
-    I AM IN POSITION [A : 10]!
-    FOLLOW ME!
-    REPORTING IN [A]!
-    KEEP YOUR FIRE [A]!
-        MOVE BACK [A]!
-    HOLD YOUR FIRE!
-    REPORTING IN [A]!
-    FIRE IN THE HOLE!
+ENEMY SPOTTED!                      /* Main begin */
+    /* Result: */
+    /*
+    10
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    ***********
+    */
+    I AM IN POSITION [A : 10]!      /* A = 10 */
+    FOLLOW ME!                      /* endassign */
+    REPORTING IN [A]!               /* print the var a */
+    KEEP YOUR FIRE [A]!             /* while A */
+        MOVE BACK [A]!              /* A-- */
+        REPORTING IN ["***********"]!   /* print("***********") */
+    HOLD YOUR FIRE!                 /* endwhile */
+    FIRE IN THE HOLE!               /* exit */
 ENEMY DOWN!
