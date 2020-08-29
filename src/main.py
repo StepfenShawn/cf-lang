@@ -193,6 +193,8 @@ def main():
             cf_run(code)
         except FileNotFoundError:
             print("File not found!")
+    else:
+        print("Please input your filename!")
 
 if __name__ == '__main__':
     main()

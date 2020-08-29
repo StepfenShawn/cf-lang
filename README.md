@@ -5,6 +5,7 @@ CF-lang is an America special forces's programming language, Let's kill all the 
 HelloWorld:
 ```
 ENEMY SPOTTED!
+   FIRE!
    REPORTING IN ["Hello World"]!
    FIRE IN THE HOLE!
 ENEMY DOWN!
@@ -45,10 +46,10 @@ cd src/
 python main.py [-filepath]
 ```
 
-## TODO
+## TODOs
 * Support function define
-* Add ElseIf stmt
-* Support For Loop
+* Add `ElseIf stmt`
+* Support `For Loop`
 
 ## Contributing
 Welcome to pull a request or open a issue!
