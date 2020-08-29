@@ -131,6 +131,11 @@ def cf_eval(code, line):
     global end_assign
     global assign_start
 
+    # Update var
+    if khash != {}:
+        for k,v in khash.items():
+            exec(k + '=' + str(v))
+            
     if 'assign' in code:
         end_assign = True
         assign_start = line
@@ -138,17 +143,14 @@ def cf_eval(code, line):
             cf_let(code[code.index('(') + 1 : code.index(':')], code[code.index(':') + 1 : code.index(')')])
         except Exception:
             pass
-    """
-    if end_assign and line == assign_start + 1 and "endass" not in code:
-        print("Line " + str(line + 1) + ": You need soldiers to follow you when you're in position(No endassign found)")
-        exit()
-    """
+
     if 'while' in code:
         while_start = line
-        if code[code.index('(') + 1 : code.index(')')].isalpha():
-            while_cond = bool(int(cf_var_get(code[code.index('(') + 1 : code.index(')')])))
-        else:
-            while_cond = bool(int(code[code.index('(') + 1 : code.index(')')]))
+        while_cond = code[code.index('(') + 1 : code.index(')')]
+        for k,v in khash.items():
+            if k in while_cond:
+                while_cond = while_cond.replace(k, str(cf_var_get(k)))
+        while_cond = bool(int(while_cond))
         end_while = True
     
     if end_while and line != 0 and not while_run and "endwhi" not in code:
@@ -171,14 +173,9 @@ def cf_eval(code, line):
         val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
         cf_let(code[code.index('(') + 1 : code.index(')')], int(val) - 1)
     if 'print' in code:
-        # identifier
-        if code[code.index('(') + 1 : code.index(')')].isalpha():
-            print(cf_var_get(code[code.index('(') + 1 : code.index(')')]))
-        # String Or Number
-        else:
-            eval(code[code.index('print') : code.index(')') + 1])
+        exec(code[code.index('print') : code.index(')') + 1])
     if 'exit()' in code:
-        eval(code[code.index('exit') : code.index('exit') + len('exit()')])
+        exec(code[code.index('exit') : code.index('exit') + len('exit()')])
 
 import sys
 sys.setrecursionlimit(10000)
