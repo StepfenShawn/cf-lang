@@ -50,6 +50,7 @@ python main.py [-filepath]
 * Support function define
 * Add `ElseIf stmt`
 * Support `For Loop`
+* Fix `While Stmt` bug
 
 ## Contributing
 Welcome to pull a request or open a issue!

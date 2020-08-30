@@ -1,8 +1,3 @@
-#===============================================
-# FILENAME: main.py
-# created at 2020/8/18 15:46:04
-#===============================================
-
 # ENEMY SPOTTES!                        :    START
 # REPORTING IN                          :    PRINT
 # ENEMY DOWN!                           :    END
@@ -15,25 +10,6 @@
 # FOLLOW ME                             :    end assign
 # MOVE ON                               :    ++
 # MOVE BACK                             :    --
-
-# Examples:
-
-# /* PRINT "Hello World" on the screen */
-# ENEMY SPOTTED!
-#   REPORTING IN ["Hello World"]!
-#   FIRE IN THE HOLE!
-# ENEMY DOWN!
-
-# /* A +oo Loop! */
-# ENEMY SPOTTED!
-#   I AM IN POSITION [A : 1]!
-#   FOLLOW ME!
-#   REPORTING IN [A]!
-#   KEEP YOUR FIRE [A]!
-#       REPORTING IN ["Go to hell!"]!
-#   HOLD YOUR FIRE!
-#   FIRE IN THE HOLE!
-# ENEMY DOWN!
 
 keyword = {
     "PRINT"     : "REPORTINGIN",      # REPORTING IN
@@ -64,6 +40,8 @@ def cf_run(code):
     code = code.replace(" ", "")
     code = code.replace("-", " ")
     code = code.replace("!", "")
+    code = code.replace("isnot", "!=")
+    code = code.replace("is", "==")
     code = code.replace("[", "(")
     code = code.replace("]", ")")
 
@@ -82,7 +60,7 @@ def cf_run(code):
     if keyword["IF"] in code:
         code = code.replace(keyword["IF"], "if")
     if keyword["ENDIF"] in code:
-        code = code.replace(keyword["ENDIF"], "endif")
+        code = code.replace(keyword["ENDIF"], "fi")
     if keyword["ADD"] in code:
         code = code.replace(keyword["ADD"], "add")
     if keyword["SUB"] in code:
@@ -109,6 +87,7 @@ def cf_let(var_name, val):
 
 def cf_var_get(var_name) -> str:
     return khash[var_name]
+    
 
 while_run = False
 while_start = 0
@@ -120,6 +99,7 @@ end_assign = False
 if_start = 0
 end_if = False
 if_cond = True
+if_run = False
 if_stmt = []
 
 def cf_eval(code, line):
@@ -130,6 +110,11 @@ def cf_eval(code, line):
     global while_start
     global end_assign
     global assign_start
+    global if_start
+    global end_if
+    global if_cond
+    global if_run
+    global if_stmt
 
     # Update var
     if khash != {}:
@@ -144,13 +129,27 @@ def cf_eval(code, line):
         except Exception:
             pass
 
+    if 'if' in code:
+        if_start = line
+        if_cond = code[code.index('(') + 1 : code.index(')')]
+        if_cond = eval(if_cond)
+        end_if = True
+
+    if end_if and line != 0 and not if_run and "fi" not in code:
+        if_stmt.append(code)
+
+    if "fi" in code:
+        end_if = False
+        if if_stmt != []:
+            if_run = True
+            if if_cond:
+                for i in range(1,len(if_stmt)):
+                    cf_eval(code[i], i)
+
     if 'while' in code:
         while_start = line
         while_cond = code[code.index('(') + 1 : code.index(')')]
-        for k,v in khash.items():
-            if k in while_cond:
-                while_cond = while_cond.replace(k, str(cf_var_get(k)))
-        while_cond = bool(int(while_cond))
+        while_cond = eval(while_cond)
         end_while = True
     
     if end_while and line != 0 and not while_run and "endwhi" not in code:

@@ -1,7 +1,7 @@
 ENEMY SPOTTED!                          /* Main begin */
     FIRE!                               /* nop */
     WAIT FOR MY GO [1 + 1 == 2]         /* if 1 + 1 == 2: */
-        REPORTING IN ["1 + 1 == 2"]     /* print "1 + 1 == 2" */
+        REPORTING IN ["here"]     /* print "1 + 1 == 2" */
     GO! GO! GO!                         /* end if */
     FIRE IN THE HOLE!                   /* exit */
 ENEMY DOWN!
