@@ -67,9 +67,6 @@ def cf_run(code):
         code = code.replace(keyword["SUB"], "sub")
     cf_parse(code)
 
-key = []
-value = []
-
 def cf_parse(code):
     # nop
     if 'FIRE' in code:
@@ -187,8 +184,7 @@ def main():
                 code = f.read()
             # Skip the comment
             import re
-            m = re.compile(r'/\*.*?\*/', re.S)
-            code = re.sub(m, ' ', code)
+            code = re.sub(re.compile(r'/\*.*?\*/', re.S), ' ', code)
             cf_run(code)
         except FileNotFoundError:
             print("File not found!")

@@ -24,6 +24,24 @@ ENEMY SPOTTED!
    FIRE IN THE HOLE!
 ENEMY DOWN!
 ```
+FizzBuzz:
+```
+ENEMY SPOTTED!
+    FIRE!
+    I AM IN POSITION [A : 0]!
+    FOLLOW ME!
+    KEEP YOUR FIRE [A <= 100]!
+        WAIT FOR MY GO [A % 3 == 0]
+            REPORTING IN ["Fizz"]!
+        GO!GO!GO!
+        WAIT FOR MY GO [A % 5 == 0]
+            REPORTING IN ["Buzz"]!
+        GO!GO!GO!
+        MOVE ON [A]!
+    HOLD YOUR FIRE!
+    FIRE IN THE HOLE!
+ENEMY DOWN!
+```
   
 
 `ENEMY SPOTTED!`: MAIN BEGIN  
