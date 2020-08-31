@@ -85,7 +85,6 @@ def cf_let(var_name, val):
 def cf_var_get(var_name) -> str:
     return khash[var_name]
     
-
 while_run = False
 while_start = 0
 end_while = False
@@ -98,6 +97,7 @@ end_if = False
 if_cond = True
 if_run = False
 if_stmt = []
+run = True
 
 def cf_eval(code, line):
     global while_run
@@ -112,13 +112,14 @@ def cf_eval(code, line):
     global if_cond
     global if_run
     global if_stmt
+    global run
 
     # Update var
     if khash != {}:
         for k,v in khash.items():
             exec(k + '=' + str(v))
             
-    if 'assign' in code:
+    if 'assign' in code and run:
         end_assign = True
         assign_start = line
         try:
@@ -126,22 +127,24 @@ def cf_eval(code, line):
         except Exception:
             pass
 
-    if 'if' in code:
+    if 'if' in code and run:
         if_start = line
         if_cond = code[code.index('(') + 1 : code.index(')')]
         if_cond = eval(if_cond)
         end_if = True
+        run = False
 
-    if end_if and line != 0 and not if_run and "fi" not in code:
+    if end_if and line != 0 and not if_run and "fi" not in code and not run:
         if_stmt.append(code)
 
     if "fi" in code:
         end_if = False
+        run = True
         if if_stmt != []:
             if_run = True
             if if_cond:
                 for i in range(1,len(if_stmt)):
-                    cf_eval(code[i], i)
+                    cf_eval(if_stmt[i], i)
 
     if 'while' in code:
         while_start = line
@@ -162,15 +165,15 @@ def cf_eval(code, line):
                 for i in range(len(while_stmt)):
                     cf_eval(while_stmt[i], i)
 
-    if 'add' in code:
+    if 'add' in code and run:
         val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
         cf_let(code[code.index('(') + 1 : code.index(')')], int(val) + 1)
-    if 'sub' in code:
+    if 'sub' in code and run:
         val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
         cf_let(code[code.index('(') + 1 : code.index(')')], int(val) - 1)
-    if 'print' in code:
+    if 'print' in code and run:
         exec(code[code.index('print') : code.index(')') + 1])
-    if 'exit()' in code:
+    if 'exit()' in code and run:
         exec(code[code.index('exit') : code.index('exit') + len('exit()')])
 
 import sys
