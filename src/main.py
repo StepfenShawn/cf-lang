@@ -11,6 +11,9 @@
 # MOVE ON                               :    ++
 # MOVE BACK                             :    --
 
+import peglet
+import re
+
 keyword = {
     "PRINT"     : "REPORTINGIN",      # REPORTING IN
     "EXIT"      : "FIREINTHEHOLE",    # FIRE YOU GO HOLE
@@ -48,7 +51,7 @@ def cf_run(code):
     if keyword["PRINT"] in code:
         code = code.replace(keyword["PRINT"] , "print")
     if keyword["EXIT"] in code:
-        code = code.replace(keyword["EXIT"], "exit()")
+        code = code.replace(keyword["EXIT"], "exit")
     if keyword["ASSIGN"] in code:
         code = code.replace(keyword["ASSIGN"], "assign")
     if keyword["ENDASSIGN"] in code:
@@ -71,122 +74,132 @@ def cf_parse(code):
     # nop
     if 'FIRE' in code:
         code = code.replace("FIRE", "")
-    code = code.split("\n")
-    codeobj = dict()
-    for i in range(len(code)):
-        codeobj[str(i)] = code[i]
-        cf_eval(codeobj[str(i)], i)
+    interpreter = Interpreter()
+    interpreter.interpreter(code)
 
-khash = dict()
-
-def cf_let(var_name, val):
-    khash[var_name] = val
-
-def cf_var_get(var_name) -> str:
-    return khash[var_name]
+class CFParser(object):
+    grammar = r"""
+    lines       = _ line _ lines
+                | _ line
+    line        = num _ stmt                        hug
+                | stmt                              hug
+    stmt        = print_stmt
+                | let_stmt
+                | exit_stmt
+    exit_stmt   = (exit)
+    print_stmt  = (print) _ expr_list
+    let_stmt    = (assign) _ var _ (\:) _ expr
+                | (assign) _ var _ (\:) _ str
+    expr_list   = expr _ , _ expr_list 
+                | expr 
+                | str _ , _ expr_list
+                | str
+    expr        = term _ binop _ expr               join
+                | term _ relop _ expr               join
+                | term
+    term        = var
+                | num
+                | l_paren _ expr _ r_paren          join
+    var_list    = var _ , _ var_list
+                | var
+    var         = ([A-Z])
+    str         = " chars " _                       join quote
+                | ' sqchars ' _                     join
+    chars       = char chars 
+                |
+    char        = ([^\x00-\x1f"\\]) 
+                | esc_char
+    sqchars     = sqchar sqchars 
+                |
+    sqchar      = ([^\x00-\x1f'\\]) 
+                | esc_char
+    esc_char    = \\(['"/\\])
+                | \\([bfnrt])                       escape
+    num         = (\-) num
+                | (\d+)
+    relop       = (<>|><|<=|<|>=|>|=)
+    binop       = (\+|\-|\*|\/)
+    l_paren     = (\()
+    r_paren     = (\))
+    _           = \s*
+        """
     
-while_run = False
-while_start = 0
-end_while = False
-while_cond = True
-while_stmt = []
-assign_start = 0
-end_assign = False
-if_start = 0
-end_if = False
-if_cond = True
-if_run = False
-if_stmt = []
-run = True
+    def __init__(self):
+        kwargs = {
+            "hug"     : peglet.hug,
+            "join"    : peglet.join,
+            "escape"  : re.escape,
+            "quote"   : self.quote,
+        }
+        self.parser = peglet.Parser(self.grammar, **kwargs)
 
-def cf_eval(code, line):
-    global while_run
-    global while_cond
-    global while_stmt
-    global end_while
-    global while_start
-    global end_assign
-    global assign_start
-    global if_start
-    global end_if
-    global if_cond
-    global if_run
-    global if_stmt
-    global run
+    def __call__(self, program):
+        return self.parser(program)
 
-    # Update var
-    if khash != {}:
-        for k,v in khash.items():
-            exec(k + '=' + str(v))
-            
-    if 'assign' in code and run:
-        end_assign = True
-        assign_start = line
-        try:
-            cf_let(code[code.index('(') + 1 : code.index(':')], code[code.index(':') + 1 : code.index(')')])
-        except Exception:
-            pass
+    def quote(self, toekn):
+        return '"%s"' %  toekn
 
-    if 'if' in code and run:
-        if_start = line
-        if_cond = code[code.index('(') + 1 : code.index(')')]
-        if_cond = eval(if_cond)
-        end_if = True
-        run = False
+class Interpreter(object):
+    def __init__(self):
+        self.curr = 0
+        self.mem = {}
+        self.sysmbols = {}
+        self.parser_tree = None
+        self.Parser = CFParser()
 
-    if end_if and line != 0 and not if_run and "fi" not in code and not run:
-        if_stmt.append(code)
-
-    if "fi" in code:
-        end_if = False
-        run = True
-        if if_stmt != []:
-            if_run = True
-            if if_cond:
-                for i in range(1,len(if_stmt)):
-                    cf_eval(if_stmt[i], i)
-
-    if 'while' in code:
-        while_start = line
-        while_cond = code[code.index('(') + 1 : code.index(')')]
-        while_cond = eval(while_cond)
-        end_while = True
+    def interpreter(self, program):
+        self.parser_tree = self.Parser(program)
+        for line in self.parser_tree:
+           if len(line) > 1:
+                head, tail = line[0], line[1:]
+                self.mem[head] = tail
+        for line in self.parser_tree:
+            self.stmt(line)
+        self.curr = 0
     
-    if end_while and line != 0 and not while_run and "endwhi" not in code:
-        while_stmt.append(code)
+    def stmt(self, stmt):
+        head, tail = stmt[0], stmt[1 : ]
+        if head == "print":
+            self.print_stmt(tail)
+        elif head == "exit":
+            self.exit_stmt()
+        elif head == "assign":
+            self.assign_stmt(tail)
+    
+    def expr_list(self, xs):
+        return [self.expr(x) for x in xs]
 
-    if "endwhi" in code:
-        end_while = False
-        if while_stmt == []:
-            pass
+    def expr(self, x):
+        if re.match("^\".*\"$", x):
+            return x.replace("\"", "")
         else:
-            while_run = True
-            while while_cond:
-                for i in range(len(while_stmt)):
-                    cf_eval(while_stmt[i], i)
+            try:
+                return str(eval(x))
+            except:
+                return x.replace("\"", "")
 
-    if 'add' in code and run:
-        val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
-        cf_let(code[code.index('(') + 1 : code.index(')')], int(val) + 1)
-    if 'sub' in code and run:
-        val = cf_var_get(code[code.index('(') + 1 : code.index(')')])
-        cf_let(code[code.index('(') + 1 : code.index(')')], int(val) - 1)
-    if 'print' in code and run:
-        exec(code[code.index('print') : code.index(')') + 1])
-    if 'exit()' in code and run:
-        exec(code[code.index('exit') : code.index('exit') + len('exit()')])
 
-import sys
-sys.setrecursionlimit(10000)
+    def print_stmt(self, content):
+        print(" ".join(self.expr_list(content)))
+    
+    def exit_stmt(self):
+        exit()
+
+    def assign_stmt(self, args):
+        key, value = args[0], args[2]
+        self.sysmbols[key] = self.expr(value)
+
+    def cf_get_var(self, var_name):
+        return self.sysmbols[var_name]
 
 # If a filename has been specified, we try to run it.
 def main():
+    import sys
     if len(sys.argv) == 2:
         try:
             with open(sys.argv[1]) as f:
                 code = f.read()
             # Skip the comment
-            import re
             code = re.sub(re.compile(r'/\*.*?\*/', re.S), ' ', code)
             cf_run(code)
         except FileNotFoundError:
