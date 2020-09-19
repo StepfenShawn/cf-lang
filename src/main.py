@@ -11,8 +11,8 @@
 # MOVE ON                               :    ++
 # MOVE BACK                             :    --
 
-import peglet
 import re
+import sys
 
 keyword = {
     "PRINT"     : "REPORTINGIN",      # REPORTING IN
@@ -26,7 +26,7 @@ keyword = {
     "ADD"       : "MOVEON",           # MOVE ON
     "SUB"       : "MOVEBACK"          # MOVE BACK
 }
-
+Node = []
 def cf_run(code):
     line = 0
     # Do some syntac check
@@ -68,133 +68,57 @@ def cf_run(code):
         code = code.replace(keyword["ADD"], "add")
     if keyword["SUB"] in code:
         code = code.replace(keyword["SUB"], "sub")
-    cf_parse(code)
+    tokens = []
+    for token in cf_token(code):
+        tokens.append(token)
+    cf_parser(tokens)
+    run(Node)
 
-def cf_parse(code):
-    # nop
-    if 'FIRE' in code:
-        code = code.replace("FIRE", "")
-    interpreter = Interpreter()
-    interpreter.interpreter(code)
+def cf_token(code):
+    code = code.replace("FIRE", "")
+    keywords = r'(?P<keywords>(print){1}|(exit){1}|(assign){1}|(endass){1}|' \
+               r'(while){1}|(endwhi){1}|(if){1}|(fi){1}|(add){1}|(sub){1})'
+    op =  r'(?P<op>\+\+|\+=|\+|--|-=|-|\*=|/=|/|%=|%)'
+    num = r'(?P<num>\d+[.]?\d+)'
+    ID =  r'(?P<ID>[a-zA-Z_][a-zA-Z_0-9]*)'
+    string = r'(?P<string>\"([^\\\"]|\\.)*\")'
+    patterns = re.compile('|'.join([keywords, ID, num, op, string]))
+    for match in re.finditer(patterns, code):
+        yield (match.lastgroup, match.group())
 
-class CFParser(object):
-    grammar = r"""
-    lines       = _ line _ lines
-                | _ line
-    line        = num _ stmt                        hug
-                | stmt                              hug
-    stmt        = print_stmt
-                | let_stmt
-                | exit_stmt
-    exit_stmt   = (exit)
-    print_stmt  = (print) _ expr_list
-    let_stmt    = (assign) _ var _ (\:) _ expr
-                | (assign) _ var _ (\:) _ str
-    expr_list   = expr _ , _ expr_list 
-                | expr 
-                | str _ , _ expr_list
-                | str
-    expr        = term _ binop _ expr               join
-                | term _ relop _ expr               join
-                | term
-    term        = var
-                | num
-                | l_paren _ expr _ r_paren          join
-    var_list    = var _ , _ var_list
-                | var
-    var         = ([A-Z])
-    str         = " chars " _                       join quote
-                | ' sqchars ' _                     join
-    chars       = char chars 
-                |
-    char        = ([^\x00-\x1f"\\]) 
-                | esc_char
-    sqchars     = sqchar sqchars 
-                |
-    sqchar      = ([^\x00-\x1f'\\]) 
-                | esc_char
-    esc_char    = \\(['"/\\])
-                | \\([bfnrt])                       escape
-    num         = (\-) num
-                | (\d+)
-    relop       = (<>|><|<=|<|>=|>|=)
-    binop       = (\+|\-|\*|\/)
-    l_paren     = (\()
-    r_paren     = (\))
-    _           = \s*
-        """
-    
-    def __init__(self):
-        kwargs = {
-            "hug"     : peglet.hug,
-            "join"    : peglet.join,
-            "escape"  : re.escape,
-            "quote"   : self.quote,
-        }
-        self.parser = peglet.Parser(self.grammar, **kwargs)
+def node_print_new(arg):
+    Node.append(["node_print", arg])
 
-    def __call__(self, program):
-        return self.parser(program)
+def node_let_new(key, value):
+    Node.append(["node_let", key, value])
 
-    def quote(self, toekn):
-        return '"%s"' %  toekn
+def node_exit_new():
+    Node.append(["node_exit"])
 
-class Interpreter(object):
-    def __init__(self):
-        self.curr = 0
-        self.mem = {}
-        self.sysmbols = {}
-        self.parser_tree = None
-        self.Parser = CFParser()
+def cf_parser(tokens):
+   global Node
+   for t in tokens:
+       if t[0] == 'keywords':
+           if t[1] == 'print':
+               node_print_new(tokens[tokens.index(t) + 1])
+           if t[1] == 'exit':
+               node_exit_new()
+           if t[1] == 'assign':
+               node_let_new(tokens[tokens.index(t) + 1], tokens[tokens.index(t) + 2])
 
-    def interpreter(self, program):
-        self.parser_tree = self.Parser(program)
-        for line in self.parser_tree:
-           if len(line) > 1:
-                head, tail = line[0], line[1:]
-                self.mem[head] = tail
-        for line in self.parser_tree:
-            self.stmt(line)
-        self.curr = 0
-    
-    def stmt(self, stmt):
-        head, tail = stmt[0], stmt[1 : ]
-        if head == "print":
-            self.print_stmt(tail)
-        elif head == "exit":
-            self.exit_stmt()
-        elif head == "assign":
-            self.assign_stmt(tail)
-    
-    def expr_list(self, xs):
-        return [self.expr(x) for x in xs]
-
-    def expr(self, x):
-        if re.match("^\".*\"$", x):
-            return x.replace("\"", "")
-        else:
-            try:
-                return str(eval(x))
-            except:
-                return x.replace("\"", "")
-
-
-    def print_stmt(self, content):
-        print(" ".join(self.expr_list(content)))
-    
-    def exit_stmt(self):
-        exit()
-
-    def assign_stmt(self, args):
-        key, value = args[0], args[2]
-        self.sysmbols[key] = self.expr(value)
-
-    def cf_get_var(self, var_name):
-        return self.sysmbols[var_name]
+def run(Nodes):
+    if Nodes == None:
+        return None
+    for node in Nodes:
+        if node[0] == "node_print":
+            exec("print(" + node[1][1] + ")")
+        if node[0] == "node_let":
+            exec(node[1][1] + "=" + node[2][1])
+        if node[0] == "node_exit":
+            exec("exit(0)")
 
 # If a filename has been specified, we try to run it.
 def main():
-    import sys
     if len(sys.argv) == 2:
         try:
             with open(sys.argv[1]) as f:
