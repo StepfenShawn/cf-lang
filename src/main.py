@@ -82,9 +82,10 @@ def cf_token(code):
     num = r'(?P<num>\d+[.]?\d+)'
     ID =  r'(?P<ID>[a-zA-Z_][a-zA-Z_0-9]*)'
     string = r'(?P<string>\"([^\\\"]|\\.)*\")'
-    patterns = re.compile('|'.join([keywords, ID, num, op, string]))
+    cond = r'(?P<cond>[<](.*?)[>])'
+    patterns = re.compile('|'.join([keywords, ID, num, op, string, cond]))
     for match in re.finditer(patterns, code):
-        yield (match.lastgroup, match.group())
+        yield [match.lastgroup, match.group()]
 
 def node_print_new(arg):
     Node.append(["node_print", arg])
@@ -95,16 +96,40 @@ def node_let_new(key, value):
 def node_exit_new():
     Node.append(["node_exit"])
 
+def node_sub_new(value):
+    Node.append(["node_sub", value])
+
+def node_add_new(value):
+    Node.append(["node_add", value])
+
+def node_if_new(cond, stmt):
+    Node.append(["node_if", cond, stmt])
+
 def cf_parser(tokens):
    global Node
+   print(tokens)
    for t in tokens:
        if t[0] == 'keywords':
            if t[1] == 'print':
-               node_print_new(tokens[tokens.index(t) + 1])
+                if tokens[tokens.index(t) + 1][0] == "string" or tokens[tokens.index(t) + 1][0] == "num" or \
+                tokens[tokens.index(t) + 1][0] == "ID":
+                    node_print_new(tokens[tokens.index(t) + 1])
            if t[1] == 'exit':
                node_exit_new()
            if t[1] == 'assign':
-               node_let_new(tokens[tokens.index(t) + 1], tokens[tokens.index(t) + 2])
+               if tokens[tokens.index(t) + 1][0] == "ID" and (tokens[tokens.index(t) + 2][0] == "num" or \
+               tokens[tokens.index(t) + 2][0] == "string"):
+                    node_let_new(tokens[tokens.index(t) + 1], tokens[tokens.index(t) + 2])
+           if t[1] == 'if':
+               stmt = []
+           if t[1] == "else":
+               pass
+           if t[1] == "sub":
+               if tokens[tokens.index(t) + 1][0] == "ID":
+                    node_sub_new(tokens[tokens.index(t) + 1])
+           if t[1] == "add":
+               if tokens[tokens.index(t) + 1][0] == "ID":
+                    node_add_new(tokens[tokens.index(t) + 1])
 
 def run(Nodes):
     if Nodes == None:
@@ -116,6 +141,11 @@ def run(Nodes):
             exec(node[1][1] + "=" + node[2][1])
         if node[0] == "node_exit":
             exec("exit(0)")
+        if node[0] == "node_sub":
+            exec(node[1][1] + "-= 1")
+        if node[0] == "node_add":
+            exec(node[1][1] + "+= 1")
+
 
 # If a filename has been specified, we try to run it.
 def main():

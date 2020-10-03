@@ -72,6 +72,7 @@ python main.py [-filepath]
 
 ## Now can working:
 * examples/helloworld.cf
+* examples/assign.cf
 
 ## Contributing
 Welcome to pull a request or open a issue!
