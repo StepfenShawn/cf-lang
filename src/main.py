@@ -71,7 +71,8 @@ def cf_run(code):
     tokens = []
     for token in cf_token(code):
         tokens.append(token)
-    cf_parser(tokens)
+    cf_parser = Parser(tokens)
+    cf_parser.parse()
     run(Node)
 
 def cf_token(code):
@@ -105,31 +106,47 @@ def node_add_new(value):
 def node_if_new(cond, stmt):
     Node.append(["node_if", cond, stmt])
 
-def cf_parser(tokens):
-   global Node
-   print(tokens)
-   for t in tokens:
-       if t[0] == 'keywords':
-           if t[1] == 'print':
-                if tokens[tokens.index(t) + 1][0] == "string" or tokens[tokens.index(t) + 1][0] == "num" or \
-                tokens[tokens.index(t) + 1][0] == "ID":
-                    node_print_new(tokens[tokens.index(t) + 1])
-           if t[1] == 'exit':
-               node_exit_new()
-           if t[1] == 'assign':
-               if tokens[tokens.index(t) + 1][0] == "ID" and (tokens[tokens.index(t) + 2][0] == "num" or \
-               tokens[tokens.index(t) + 2][0] == "string"):
-                    node_let_new(tokens[tokens.index(t) + 1], tokens[tokens.index(t) + 2])
-           if t[1] == 'if':
-               stmt = []
-           if t[1] == "else":
-               pass
-           if t[1] == "sub":
-               if tokens[tokens.index(t) + 1][0] == "ID":
-                    node_sub_new(tokens[tokens.index(t) + 1])
-           if t[1] == "add":
-               if tokens[tokens.index(t) + 1][0] == "ID":
-                    node_add_new(tokens[tokens.index(t) + 1])
+class Parser(object):
+    def __init__(self, tokens):
+        self.tokens = tokens
+        self.pos = 0
+
+    def get(self, offset):
+        if self.pos + offset >= len(self.tokens):
+            return ["", ""]
+        return self.tokens[self.pos + offset]
+
+    def last(self, offset):
+        return self.tokens[self.pos - offset]
+    
+    def skip(self, offset):
+        self.pos += offset
+    
+    def match(self, name):
+        if self.get(0)[1] == name:
+            self.pos += 1
+            return True
+        else:
+            return False
+    
+    def parse(self):
+        while True:
+            if self.match("print"):
+                node_print_new(self.get(0))
+                self.skip(1)
+            elif self.match("exit"):
+                node_exit_new()
+            elif self.match("add"):
+                node_add_new(self.get(0))
+                self.skip(1)
+            elif self.match("sub"):
+                node_sub_new(self.get(0))
+                self.skip(1)
+            elif self.match("assign"):
+                node_let_new(self.get(0), self.get(1))
+                self.skip(3) # Skip the key,value, "endass"
+            else:
+                break
 
 def run(Nodes):
     if Nodes == None:
