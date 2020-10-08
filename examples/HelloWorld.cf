@@ -1,5 +1,5 @@
-ENEMY SPOTTED!                      /* Main begin */
+DEFENSE POSITION!                      /* Main begin */
    FIRE!                            /* nop */
    REPORTING IN "Hello-World"!    /* print "Hello World" */
    FIRE IN THE HOLE!                /* exit */
-ENEMY DOWN!
+MISSION SUCCESS!

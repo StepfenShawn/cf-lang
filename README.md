@@ -4,16 +4,16 @@ CF-lang is an America special forces's programming language, Let's kill all the 
 # Examples
 HelloWorld:
 ```
-ENEMY SPOTTED!
+DEFENSE POSITION!
    FIRE!
    REPORTING IN "Hello World"!
    FIRE IN THE HOLE!
-ENEMY DOWN!
+MISSION SUCCESS!
 ```
   
 endless loop:
 ```
-ENEMY SPOTTED!
+DEFENSE POSITION!
    FIRE!
    I AM IN POSITION A : 1!
    FOLLOW ME!
@@ -22,11 +22,11 @@ ENEMY SPOTTED!
        REPORTING IN "Go-to-hell!"!
    HOLD YOUR FIRE!
    FIRE IN THE HOLE!
-ENEMY DOWN!
+MISSION SUCCESS!
 ```
 FizzBuzz:
 ```
-ENEMY SPOTTED!
+DEFENSE POSITION!
     FIRE!
     I AM IN POSITION A : 0!
     FOLLOW ME!
@@ -40,12 +40,12 @@ ENEMY SPOTTED!
         MOVE ON A!
     HOLD YOUR FIRE!
     FIRE IN THE HOLE!
-ENEMY DOWN!
+MISSION SUCCESS!
 ```
   
 
-`ENEMY SPOTTED!`: MAIN BEGIN  
-`ENEMY DOWN!`:  MAIN END  
+`DEFENSE POSITION!`: MAIN BEGIN  
+`MISSION SUCCESS!`:  MAIN END  
 `REPORTING IN`: PRINT FUNCTION  
 `FIRE IN THE HOLE`: EXIT FUNCTION  
 `KEEP YOUR FIRE`: WHILE  
@@ -68,11 +68,12 @@ python main.py [-filepath]
 * Support function define
 * Add `ElseIf stmt`
 * Support `For Loop`
-* Fix `While Stmt` bug
 
 ## Now can working:
-* examples/helloworld.cf
-* examples/assign.cf
+* [examples/helloworld.cf](examples/helloworld.cf)
+* [examples/assign.cf](examples/assign.cf)
+* [examples/if.cf](examples/if.cf)
+* [examples/loop.cf](examples/loop.cf)
 
 ## Contributing
 Welcome to pull a request or open a issue!

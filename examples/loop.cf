@@ -1,10 +1,10 @@
-ENEMY SPOTTED!                          /* Main begin */
+DEFENSE POSITION!                       /* Main begin */
    FIRE!                                /* nop */
-   I AM IN POSITION [A : 1]!            /* A = 1 */
+   I AM IN POSITION A : 1!              /* A = 1 */
    FOLLOW ME!                           /* endassign */
    REPORTING IN [A]!                    /* print the var "A" */
-   KEEP YOUR FIRE [A]!                  /* while A: */
+   KEEP YOUR FIRE <A>!                  /* while A: */
        REPORTING IN ["Go-to-hell!"]!    /* print "Go to hell" */
    HOLD YOUR FIRE!                      /* endwhile */
    FIRE IN THE HOLE!                    /* exit */
-ENEMY DOWN!
+MISSION SUCCESS!

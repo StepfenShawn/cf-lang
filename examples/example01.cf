@@ -1,4 +1,4 @@
-ENEMY SPOTTED!                      /* Main begin */
+DEFENSE POSITION!                      /* Main begin */
     /* Result: */
     /*
     10
@@ -22,4 +22,4 @@ ENEMY SPOTTED!                      /* Main begin */
         REPORTING IN ["***********"]!   /* print("***********") */
     HOLD YOUR FIRE!                 /* endwhile */
     FIRE IN THE HOLE!               /* exit */
-ENEMY DOWN!
+MISSION SUCCESS!

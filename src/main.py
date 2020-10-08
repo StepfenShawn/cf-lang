@@ -1,6 +1,6 @@
 # ENEMY SPOTTES!                        :    START
 # REPORTING IN                          :    PRINT
-# ENEMY DOWN!                           :    END
+# MISSION SUCCESS!                           :    END
 # FIRE IN THE HOLE                      :    exit function
 # KEEP YOUR WHILE                       :    while
 # HOLD YOUR FIRE                        :    end while
@@ -26,18 +26,18 @@ keyword = {
     "ADD"       : "MOVEON",           # MOVE ON
     "SUB"       : "MOVEBACK"          # MOVE BACK
 }
-Node = []
+
 def cf_run(code):
     line = 0
     # Do some syntac check
-    if code[:len('ENEMY SPOTTED!')] != 'ENEMY SPOTTED!':
-        print("Error: Don't panic! No ememy spotted!")
+    if code[:len('DEFENSE POSITION!')] != 'DEFENSE POSITION!':
+        print("Error: No main function found!")
         exit()
-    if code[-len('ENEMY DOWN!'):] != 'ENEMY DOWN!':
-        print("Error: The enemy was not annihilated! Mission Failed!")
+    if code[-len('MISSION SUCCESS!'):] != 'MISSION SUCCESS!':
+        print("Error: No MainEnd found! Mission Failed!")
         exit()
-    # Remove the "ENEMY SPOTTED!" and "ENEMY DOWN!"
-    code = code[len('ENEMY SPOTTED!') : -len('ENEMY DOWN!')]
+    # Remove the "DEFENSE POSITION!" and "MISSION SUCCESS!"
+    code = code[len('DEFENSE POSITION!') : -len('MISSION SUCCESS!')]
 
     # Remove the whitespace
     code = code.replace(" ", "")
@@ -71,16 +71,17 @@ def cf_run(code):
     tokens = []
     for token in cf_token(code):
         tokens.append(token)
-    cf_parser = Parser(tokens)
+    print(tokens)
+    cf_parser = Parser(tokens, [])
     cf_parser.parse()
-    run(Node)
+    run(cf_parser.Node)
 
 def cf_token(code):
     code = code.replace("FIRE", "")
     keywords = r'(?P<keywords>(print){1}|(exit){1}|(assign){1}|(endass){1}|' \
                r'(while){1}|(endwhi){1}|(if){1}|(fi){1}|(add){1}|(sub){1})'
     op =  r'(?P<op>\+\+|\+=|\+|--|-=|-|\*=|/=|/|%=|%)'
-    num = r'(?P<num>\d+[.]?\d+)'
+    num = r'(?P<num>\d+)'
     ID =  r'(?P<ID>[a-zA-Z_][a-zA-Z_0-9]*)'
     string = r'(?P<string>\"([^\\\"]|\\.)*\")'
     cond = r'(?P<cond>[<](.*?)[>])'
@@ -88,28 +89,32 @@ def cf_token(code):
     for match in re.finditer(patterns, code):
         yield [match.lastgroup, match.group()]
 
-def node_print_new(arg):
+def node_print_new(Node, arg):
     Node.append(["node_print", arg])
 
-def node_let_new(key, value):
+def node_let_new(Node, key, value):
     Node.append(["node_let", key, value])
 
-def node_exit_new():
+def node_exit_new(Node):
     Node.append(["node_exit"])
 
-def node_sub_new(value):
+def node_sub_new(Node, value):
     Node.append(["node_sub", value])
 
-def node_add_new(value):
+def node_add_new(Node, value):
     Node.append(["node_add", value])
 
-def node_if_new(cond, stmt):
+def node_if_new(Node, cond, stmt):
     Node.append(["node_if", cond, stmt])
 
+def node_loop_new(Node, cond, stmt):
+    Node.append(["node_loop", cond, stmt])
+
 class Parser(object):
-    def __init__(self, tokens):
+    def __init__(self, tokens, Node):
         self.tokens = tokens
         self.pos = 0
+        self.Node = Node
 
     def get(self, offset):
         if self.pos + offset >= len(self.tokens):
@@ -132,19 +137,42 @@ class Parser(object):
     def parse(self):
         while True:
             if self.match("print"):
-                node_print_new(self.get(0))
+                node_print_new(self.Node, self.get(0))
                 self.skip(1)
             elif self.match("exit"):
-                node_exit_new()
+                node_exit_new(self.Node)
             elif self.match("add"):
-                node_add_new(self.get(0))
+                node_add_new(self.Node, self.get(0))
                 self.skip(1)
             elif self.match("sub"):
-                node_sub_new(self.get(0))
+                node_sub_new(self.Node, self.get(0))
                 self.skip(1)
             elif self.match("assign"):
-                node_let_new(self.get(0), self.get(1))
+                node_let_new(self.Node, self.get(0), self.get(1))
                 self.skip(3) # Skip the key,value, "endass"
+            elif self.match("if"):
+                cond = self.get(0)
+                self.skip(1)
+                stmt = []
+                while self.tokens[self.pos][1] != 'fi':
+                    stmt.append(self.tokens[self.pos])
+                    self.pos += 1
+                if_node = []
+                Parser(stmt, if_node).parse()
+                node_if_new(self.Node, cond, if_node)
+                self.skip(1)  # Skip the "endif"
+            elif self.match("while"):
+                cond = self.get(0)
+                print(cond)
+                self.skip(1)
+                stmt = []
+                while self.tokens[self.pos][1] != 'endwhi':
+                    stmt.append(self.tokens[self.pos])
+                    self.pos += 1
+                whi_node = []
+                Parser(stmt, whi_node).parse()
+                node_loop_new(self.Node, cond, whi_node)
+                self.skip(1) # Skip the "endwhi"
             else:
                 break
 
@@ -162,7 +190,14 @@ def run(Nodes):
             exec(node[1][1] + "-= 1")
         if node[0] == "node_add":
             exec(node[1][1] + "+= 1")
-
+        if node[0] == "node_if":
+            cond = eval(node[1][1].replace("<","").replace(">", ""))
+            if cond:
+                run(node[2])
+        if node[0] == "node_loop":
+            cond = eval(node[1][1].replace("<","").replace(">", ""))
+            while cond:
+                run(node[2])
 
 # If a filename has been specified, we try to run it.
 def main():
