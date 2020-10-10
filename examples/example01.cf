@@ -14,12 +14,12 @@ DEFENSE POSITION!                      /* Main begin */
     ***********
     ***********
     */
-    I AM IN POSITION [A : 10]!      /* A = 10 */
+    I AM IN POSITION A : 10!        /* A = 10 */
     FOLLOW ME!                      /* endassign */
-    REPORTING IN [A]!               /* print the var a */
-    KEEP YOUR FIRE [A is not 0]!             /* while A */
-        MOVE BACK [A]!              /* A-- */
-        REPORTING IN ["***********"]!   /* print("***********") */
+    REPORTING IN A!                 /* print the var a */
+    KEEP YOUR FIRE <A>!             /* while A */
+        MOVE BACK A!                  /* A-- */
+        REPORTING IN "***********"!   /* print("***********") */
     HOLD YOUR FIRE!                 /* endwhile */
     FIRE IN THE HOLE!               /* exit */
 MISSION SUCCESS!

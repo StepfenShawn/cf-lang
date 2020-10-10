@@ -1,7 +1,9 @@
 DEFENSE POSITION!                          /* Main begin */
-    FIRE!                               /* nop */
-    WAIT FOR MY GO <1 + 1 == 2>         /* if 1 + 1 == 2: */
-        REPORTING IN "here"             /* print "1 + 1 == 2" */
-    GO! GO! GO!                         /* end if */
-    FIRE IN THE HOLE!                   /* exit */
+    FIRE!                                 /* nop */
+    I AM IN POSITION A : 1!
+    FOLLOW ME!
+    WAIT FOR MY GO <A + 1 == 2>           /* if 1 + 1 == 2: */
+        REPORTING IN "here"               /* print "1 + 1 == 2" */
+    GO! GO! GO!                           /* end if */
+    FIRE IN THE HOLE!                     /* exit */
 MISSION SUCCESS!

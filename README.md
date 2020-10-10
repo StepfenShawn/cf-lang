@@ -18,7 +18,7 @@ DEFENSE POSITION!
    I AM IN POSITION A : 1!
    FOLLOW ME!
    REPORTING IN A!
-   KEEP YOUR FIRE A!
+   KEEP YOUR FIRE <A>!
        REPORTING IN "Go-to-hell!"!
    HOLD YOUR FIRE!
    FIRE IN THE HOLE!
@@ -30,11 +30,11 @@ DEFENSE POSITION!
     FIRE!
     I AM IN POSITION A : 0!
     FOLLOW ME!
-    KEEP YOUR FIRE A <= 100!
-        WAIT FOR MY GO A % 3 == 0!
+    KEEP YOUR FIRE <A <= 100>!
+        WAIT FOR MY GO <A % 3 == 0>!
             REPORTING IN "Fizz"!
         GO!GO!GO!
-        WAIT FOR MY GO A % 5 == 0!
+        WAIT FOR MY GO <A % 5 == 0>!
             REPORTING IN "Buzz"!
         GO!GO!GO!
         MOVE ON A!

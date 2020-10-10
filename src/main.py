@@ -1,6 +1,6 @@
-# ENEMY SPOTTES!                        :    START
+# DEFENSE POSITION!                     :    START
 # REPORTING IN                          :    PRINT
-# MISSION SUCCESS!                           :    END
+# MISSION SUCCESS!                      :    END
 # FIRE IN THE HOLE                      :    exit function
 # KEEP YOUR WHILE                       :    while
 # HOLD YOUR FIRE                        :    end while
@@ -29,7 +29,7 @@ keyword = {
 
 def cf_run(code):
     line = 0
-    # Do some syntac check
+    # Do some syntax check
     if code[:len('DEFENSE POSITION!')] != 'DEFENSE POSITION!':
         print("Error: No main function found!")
         exit()
@@ -71,7 +71,6 @@ def cf_run(code):
     tokens = []
     for token in cf_token(code):
         tokens.append(token)
-    print(tokens)
     cf_parser = Parser(tokens, [])
     cf_parser.parse()
     run(cf_parser.Node)
@@ -163,7 +162,6 @@ class Parser(object):
                 self.skip(1)  # Skip the "endif"
             elif self.match("while"):
                 cond = self.get(0)
-                print(cond)
                 self.skip(1)
                 stmt = []
                 while self.tokens[self.pos][1] != 'endwhi':
@@ -191,12 +189,10 @@ def run(Nodes):
         if node[0] == "node_add":
             exec(node[1][1] + "+= 1")
         if node[0] == "node_if":
-            cond = eval(node[1][1].replace("<","").replace(">", ""))
-            if cond:
+            if eval(node[1][1][1 : -1]):
                 run(node[2])
         if node[0] == "node_loop":
-            cond = eval(node[1][1].replace("<","").replace(">", ""))
-            while cond:
+            while eval(node[1][1][1 : -1]):
                 run(node[2])
 
 # If a filename has been specified, we try to run it.
