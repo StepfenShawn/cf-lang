@@ -1,5 +1,5 @@
 # What is CF-lang
-CF-lang is an America special forces's programming language, Let's kill all the enemy!    
+CF-lang is a General Infantry's programming language, Let's kill all the enemy!    
 ![image](img/special-forces.jpg)  
 # Examples
 HelloWorld:
