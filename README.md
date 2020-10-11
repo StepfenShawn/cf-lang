@@ -4,45 +4,45 @@ CF-lang is an America special forces's programming language, Let's kill all the 
 # Examples
 HelloWorld:
 ```
-DEFENSE POSITION!
-   FIRE!
-   REPORTING IN "Hello World"!
-   FIRE IN THE HOLE!
-MISSION SUCCESS!
+DEFENSE POSITION!   /* Main begin */
+   FIRE!            /* nop */
+   REPORTING IN "Hello World"!  /* print "Hello World */
+   FIRE IN THE HOLE!  /* exit */
+MISSION SUCCESS!    /* Main end */
 ```
   
 endless loop:
 ```
-DEFENSE POSITION!
-   FIRE!
-   I AM IN POSITION A : 1!
-   FOLLOW ME!
-   REPORTING IN A!
-   KEEP YOUR FIRE <A>!
-       REPORTING IN "Go-to-hell!"!
-   HOLD YOUR FIRE!
-   FIRE IN THE HOLE!
-MISSION SUCCESS!
+DEFENSE POSITION!           /* Main begin */
+   FIRE!                    /* nop */
+   I AM IN POSITION A : 1!  /* A = 1 */
+   FOLLOW ME!               /* end assign */
+   REPORTING IN A!          /* print A */
+   KEEP YOUR FIRE <A>!      /* while A */
+       REPORTING IN "Go-to-hell!"!     /* print "Go-to-hell" */
+   HOLD YOUR FIRE!          /* end while */
+   FIRE IN THE HOLE!        /* exit */
+MISSION SUCCESS!            /* Main end */
 ```
 FizzBuzz:
 ```
-DEFENSE POSITION!
-    FIRE!
-    I AM IN POSITION A : 0!
-    FOLLOW ME!
-    KEEP YOUR FIRE <A <= 100>!
-        WAIT FOR MY GO <A % 3 == 0>!
-            REPORTING IN "Fizz"!
-        GO!GO!GO!
-        WAIT FOR MY GO <A % 5 == 0>!
-            REPORTING IN "Buzz"!
-        GO!GO!GO!
-        MOVE ON A!
-    HOLD YOUR FIRE!
-    FIRE IN THE HOLE!
-MISSION SUCCESS!
+DEFENSE POSITION!        /* Main begin */
+    FIRE!                /* nop */
+    I AM IN POSITION A : 0!   /* A = 0 */
+    FOLLOW ME!           /* end assign */
+    KEEP YOUR FIRE <A <= 100>!   /* while A <= 100 */
+        WAIT FOR MY GO <A % 3 == 0>!    /* if A % 3 == 0 */
+            REPORTING IN "Fizz"!        /* print "Fizz" */
+        GO!GO!GO!                       /* end if */
+        WAIT FOR MY GO <A % 5 == 0>!    /* if A % 5 == 0 */
+            REPORTING IN "Buzz"!        /* print "Buzz" */
+        GO!GO!GO!                       /* end if */
+        MOVE ON A!         /* A -= 1 */
+    HOLD YOUR FIRE!        /* end while */
+    FIRE IN THE HOLE!      /* exit */
+MISSION SUCCESS!         /* Main end */
 ```
-  
+#### Try more [examples](examples)!
 
 `DEFENSE POSITION!`: MAIN BEGIN  
 `MISSION SUCCESS!`:  MAIN END  
@@ -68,12 +68,6 @@ python main.py [-filepath]
 * Support function define
 * Add `ElseIf stmt`
 * Support `For Loop`
-
-## Now can working:
-* [examples/helloworld.cf](examples/helloworld.cf)
-* [examples/assign.cf](examples/assign.cf)
-* [examples/if.cf](examples/if.cf)
-* [examples/loop.cf](examples/loop.cf)
 
 ## Contributing
 Welcome to pull a request or open a issue!

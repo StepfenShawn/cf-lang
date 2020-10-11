@@ -26,50 +26,28 @@ keyword = {
     "ADD"       : "MOVEON",           # MOVE ON
     "SUB"       : "MOVEBACK"          # MOVE BACK
 }
-
+def trans(code, rep):
+    for r in rep:
+        code = code.replace(r[0], r[1])
+    return code
+    
 def cf_run(code):
-    line = 0
     # Do some syntax check
     if code[:len('DEFENSE POSITION!')] != 'DEFENSE POSITION!':
         print("Error: No main function found!")
-        exit()
+        exit(0)
     if code[-len('MISSION SUCCESS!'):] != 'MISSION SUCCESS!':
         print("Error: No MainEnd found! Mission Failed!")
-        exit()
+        exit(0)
     # Remove the "DEFENSE POSITION!" and "MISSION SUCCESS!"
     code = code[len('DEFENSE POSITION!') : -len('MISSION SUCCESS!')]
-
-    # Remove the whitespace
-    code = code.replace(" ", "")
-    code = code.replace("-", " ")
-    code = code.replace("!", "")
-    code = code.replace("isnot", "!=")
-    code = code.replace("is", "==")
-    code = code.replace("[", "(")
-    code = code.replace("]", ")")
-
-    if keyword["PRINT"] in code:
-        code = code.replace(keyword["PRINT"] , "print")
-    if keyword["EXIT"] in code:
-        code = code.replace(keyword["EXIT"], "exit")
-    if keyword["ASSIGN"] in code:
-        code = code.replace(keyword["ASSIGN"], "assign")
-    if keyword["ENDASSIGN"] in code:
-        code = code.replace(keyword["ENDASSIGN"], "endass")
-    if keyword["WHILE"] in code:
-        code = code.replace(keyword["WHILE"], "while")
-    if keyword["ENDWHILE"] in code:
-        code = code.replace(keyword["ENDWHILE"], "endwhi")
-    if keyword["IF"] in code:
-        code = code.replace(keyword["IF"], "if")
-    if keyword["ENDIF"] in code:
-        code = code.replace(keyword["ENDIF"], "fi")
-    if keyword["ADD"] in code:
-        code = code.replace(keyword["ADD"], "add")
-    if keyword["SUB"] in code:
-        code = code.replace(keyword["SUB"], "sub")
+    replace = [[" ", ""], ["-", " "], ["!", ""], ["isnot", "!="], [keyword["PRINT"] , "print"] \
+                 ,[keyword["EXIT"], "exit"], [keyword["ASSIGN"], "assign"], [keyword["ENDASSIGN"], "endass"] \
+                 ,[keyword["WHILE"], "while"], [keyword["ENDWHILE"], "endwhi"], [keyword["IF"], "if"] \
+                 ,[keyword["ENDIF"], "fi"], [keyword["ADD"], "add"], [keyword["SUB"], "sub"]
+            ]
     tokens = []
-    for token in cf_token(code):
+    for token in cf_token(trans(code, replace)):
         tokens.append(token)
     cf_parser = Parser(tokens, [])
     cf_parser.parse()
@@ -173,26 +151,28 @@ class Parser(object):
                 self.skip(1) # Skip the "endwhi"
             else:
                 break
-
+var = {}           
 def run(Nodes):
     if Nodes == None:
         return None
     for node in Nodes:
         if node[0] == "node_print":
-            exec("print(" + node[1][1] + ")")
+            exec("print(" + node[1][1] + ")", var)
         if node[0] == "node_let":
-            exec(node[1][1] + "=" + node[2][1])
+            if node[2][0] == 'num':
+                var[node[1][1]] = int(node[2][1])
+            else:
+                var[node[1][1]] = node[2][1]
         if node[0] == "node_exit":
-            exec("exit(0)")
+            exec("exit(0)", var)
         if node[0] == "node_sub":
-            exec(node[1][1] + "-= 1")
+            exec(node[1][1] + "-= 1", var)
         if node[0] == "node_add":
-            exec(node[1][1] + "+= 1")
-        if node[0] == "node_if":
-            if eval(node[1][1][1 : -1]):
+            exec(node[1][1] + "+= 1", var)
+        if node[0] == "node_if" and eval(node[1][1][1 : -1], var):
                 run(node[2])
         if node[0] == "node_loop":
-            while eval(node[1][1][1 : -1]):
+            while eval(node[1][1][1 : -1], var):
                 run(node[2])
 
 # If a filename has been specified, we try to run it.
